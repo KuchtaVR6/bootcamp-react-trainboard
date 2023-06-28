@@ -18,7 +18,7 @@ const UserInputFormArea: React.FC = () => {
 
     const [departureStation, setDepartureStation] = useState<StationInfo>();
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
-    const [message, setErrorMessage] = useState('Please select both stations');
+    const [message, setMessage] = useState('Please select both stations');
 
     const [stationList, setStationList] = useState<StationInfo[]>([]);
 
@@ -33,12 +33,12 @@ const UserInputFormArea: React.FC = () => {
 
     useEffect(() => {
         if (!departureStation || !destinationStation) {
-            setErrorMessage('Please select both stations');
+            setMessage('Please select both stations');
         } else {
             if (departureStation.id === destinationStation.id) {
                 setErrorMessage('Destination must be diffrent from the departure');
             } else {
-                setErrorMessage('');
+                setMessage('');
             }
         }
     }, [departureStation, destinationStation]);
