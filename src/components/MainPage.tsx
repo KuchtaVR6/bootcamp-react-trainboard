@@ -8,11 +8,11 @@ export type StationInfo = {
     latitude: number;
     longitude: number;
     aliases: string[];
-    codes: {
-        id: number;
-        crs: string;
-        nlc: string;
-    };
+    id: number;
+    crs: string;
+    nlc: string;
+    isGrownStation : boolean; 
+    isSilverSeekStation : boolean;
 }
 
 const MainPage: React.FC = () => {
@@ -33,10 +33,10 @@ const MainPage: React.FC = () => {
         if (!station) {
             throw new Error('Abort: Station not selected.');
         }
-        if (station.codes.crs.length > 0) {
-            return station.codes.crs;
-        } else if (station.codes.nlc.length > 0) {
-            return station.codes.nlc;
+        if (station.crs.length > 0) {
+            return station.crs;
+        } else if (station.nlc.length > 0) {
+            return station.nlc;
         } else {
             throw new Error('Abort: Station invalid.');
         }

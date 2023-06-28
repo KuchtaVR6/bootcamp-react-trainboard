@@ -11,64 +11,38 @@ interface UserInputFormAreaArgs {
     handleSubmitStations: () => void;
 }
 
-const hardCodedStations: StationInfo[] = [
-    {
-        codes: {
-            id: 3457,
-            crs: '1444',
-            nlc: '6121',
-        },
-        name: 'London Kings Cross',
-        aliases: [
-            'Queens Cross',
-        ],
-        latitude: 51.53088842,
-        longitude: -0.122921342,
-    },
-    {
-        codes: {
-            id: 3458,
-            crs: 'HML',
-            nlc: '6121',
-        },
-        name: 'Edinburgh',
-        aliases: [
-            'Queens Cross',
-        ],
-        latitude: 51.53088842,
-        longitude: -0.122921342,
-    },
-    {
-        codes: {
-            id: 3459,
-            crs: 'DUR',
-            nlc: '6121',
-        },
-        name: 'Durham',
-        aliases: [
-            'Queens Cross',
-        ],
-        latitude: 51.53088842,
-        longitude: -0.122921342,
-    },
-];
-
 const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, destinationStation, setDepartureStation, setDestinationStation, handleSubmitStations }) => {
 
     const [message, setMessage] = useState('Please select both stations');
+    const [stationList, setStationList] = useState<StationInfo[]>([]);
 
     useEffect(() => {
         if (!departureStation || !destinationStation) {
             setMessage('Please select both stations');
         } else {
-            if (departureStation.codes.id === destinationStation.codes.id) {
+            if (departureStation.id === destinationStation.id) {
                 setMessage('Destination must be diffrent from the departure');
             } else {
                 setMessage('');
             }
         }
-        
-    },[departureStation,destinationStation]);
+    }, [departureStation, destinationStation]);
+
+    const stationSort = (stationOne : StationInfo, stationTwo : StationInfo)=>{
+        return stationOne.name.toLowerCase() > stationTwo.name.toLowerCase() ? 1 : -1;
+    };
+
+    const handleStationResponse = (response : Response) => {
+        response.json().then((body) => {
+            if(body.stations){
+                setStationList(body.stations.sort(stationSort));
+            }
+        });
+    };
+
+    useEffect(() => {
+        fetchStations().then(handleStationResponse);
+    });
 
     return (
         <div className = "user-area-form-container">
@@ -76,15 +50,15 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
                 <div className = 'station-select-menu'>
                     <StationSelectMenu
                         label = 'Departures:'
-                        stationList = { hardCodedStations }
+                        stationList = { stationList }
                         setSelection = { setDepartureStation }
-                        skipTheseStationIDs = { [destinationStation?.codes.id] }
+                        skipTheseStationIDs = { [destinationStation?.id] }
                     />
                     <StationSelectMenu
                         label = 'Destination:'
-                        stationList = { hardCodedStations }
+                        stationList = { stationList }
                         setSelection = { setDestinationStation }
-                        skipTheseStationIDs = { [departureStation?.codes.id] }
+                        skipTheseStationIDs = { [departureStation?.id] }
                     />
                 </div>
 
