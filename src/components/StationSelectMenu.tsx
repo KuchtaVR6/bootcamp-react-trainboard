@@ -16,6 +16,7 @@ const StationSelectMenu: React.FC<StationSelectMenuArgs> = ({ label, stationList
             </label>
             <select 
                 id = { 'station-selector-' + label }
+                defaultValue = { 'notselected' }
                 onChange = { (event) => {
                     setSelection(stationList.find((station) => {
                         return station.id === Number(event.target.value);
@@ -23,7 +24,7 @@ const StationSelectMenu: React.FC<StationSelectMenuArgs> = ({ label, stationList
                 } }
             >
                 
-                <option label = " " style = { { display: 'none' } } selected = { true }></option>
+                <option label = " " style = { { display: 'none' } } value = "notselected"></option>
 
                 {stationList.map((stationEntry) => {
                     if (!skipTheseStationIDs.includes(stationEntry.id)) {

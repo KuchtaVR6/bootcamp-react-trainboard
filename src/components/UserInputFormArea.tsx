@@ -43,21 +43,20 @@ const UserInputFormArea: React.FC = () => {
         }
     }, [departureStation, destinationStation]);
 
-    useEffect(() => {
-        fetchStations().then((response) => {
-            response.json().then((body) => {
-                if(body.stations){
-                    setStationList(body.stations.sort((stationOne : StationInfo, stationTwo : StationInfo)=>{
-                        if(stationOne.name.toLowerCase() > stationTwo.name.toLowerCase()) {
-                            return 1;
-                        }
-                        else {
-                            return -1;
-                        }
-                    }));
-                }
-            });
+    const stationSort = (stationOne : StationInfo, stationTwo : StationInfo)=>{
+        return stationOne.name.toLowerCase() > stationTwo.name.toLowerCase() ? 1 : -1;
+    };
+
+    const handleStationResponse = (response : Response) => {
+        response.json().then((body) => {
+            if(body.stations){
+                setStationList(body.stations.sort(stationSort));
+            }
         });
+    };
+
+    useEffect(() => {
+        fetchStations().then(handleStationResponse);
     });
 
     return (
