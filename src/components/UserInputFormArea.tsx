@@ -7,54 +7,12 @@ export type StationInfo = {
     latitude: number;
     longitude: number;
     aliases: string[];
-    codes: {
-        id: number;
-        crs: string;
-        nlc: string;
-    };
+    id: number;
+    crs: string;
+    nlc: string;
+    isGrownStation : boolean; 
+    isSilverSeekStation : boolean;
 }
-
-const hardCodedStations: StationInfo[] = [
-    {
-        codes: {
-            id: 3457,
-            crs: 'KGX',
-            nlc: '6121',
-        },
-        name: 'London Kings Cross',
-        aliases: [
-            'Queens Cross',
-        ],
-        latitude: 51.53088842,
-        longitude: -0.122921342,
-    },
-    {
-        codes: {
-            id: 3458,
-            crs: 'EDB',
-            nlc: '6121',
-        },
-        name: 'Edinburgh',
-        aliases: [
-            'Queens Cross',
-        ],
-        latitude: 51.53088842,
-        longitude: -0.122921342,
-    },
-    {
-        codes: {
-            id: 3459,
-            crs: 'DUR',
-            nlc: '6121',
-        },
-        name: 'Durham',
-        aliases: [
-            'Queens Cross',
-        ],
-        latitude: 51.53088842,
-        longitude: -0.122921342,
-    },
-];
 
 const UserInputFormArea: React.FC = () => {
 
@@ -62,11 +20,13 @@ const UserInputFormArea: React.FC = () => {
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
     const [message, setErrorMessage] = useState('Please select both stations');
 
+    const [stationList, setStationList] = useState<StationInfo[]>([]);
+
     const handleSubmitStations = () => {
         window.open(
             'https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/' +
-            departureStation?.codes.crs + '/' +
-            destinationStation?.codes.crs +
+            departureStation?.crs + '/' +
+            destinationStation?.crs +
             '/',
         );
     };
@@ -75,14 +35,30 @@ const UserInputFormArea: React.FC = () => {
         if (!departureStation || !destinationStation) {
             setErrorMessage('Please select both stations');
         } else {
-            if (departureStation.codes.id === destinationStation.codes.id) {
+            if (departureStation.id === destinationStation.id) {
                 setErrorMessage('Destination must be diffrent from the departure');
             } else {
                 setErrorMessage('');
             }
         }
-        
-    },[departureStation,destinationStation]);
+    }, [departureStation, destinationStation]);
+
+    useEffect(() => {
+        fetchStations().then((response) => {
+            response.json().then((body) => {
+                if(body.stations){
+                    setStationList(body.stations.sort((stationOne : StationInfo, stationTwo : StationInfo)=>{
+                        if(stationOne.name.toLowerCase() > stationTwo.name.toLowerCase()) {
+                            return 1;
+                        }
+                        else {
+                            return -1;
+                        }
+                    }));
+                }
+            });
+        });
+    });
 
     return (
         <div className = "user-area-form-container">
@@ -90,15 +66,15 @@ const UserInputFormArea: React.FC = () => {
                 <div className = 'station-select-menu'>
                     <StationSelectMenu
                         label = 'Departures:'
-                        stationList = { hardCodedStations }
+                        stationList = { stationList }
                         setSelection = { setDepartureStation }
-                        skipTheseStationIDs = { [destinationStation?.codes.id] }
+                        skipTheseStationIDs = { [destinationStation?.id] }
                     />
                     <StationSelectMenu
                         label = 'Destination:'
-                        stationList = { hardCodedStations }
+                        stationList = { stationList }
                         setSelection = { setDestinationStation }
-                        skipTheseStationIDs = { [departureStation?.codes.id] }
+                        skipTheseStationIDs = { [departureStation?.id] }
                     />
                 </div>
 
