@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { fetchStations } from '../helpers/ApiCallHelper';
+import { StationInfo } from './MainPage';
 import StationSelectMenu from './StationSelectMenu';
 
-export type StationInfo = {
-    name: string;
-    latitude: number;
-    longitude: number;
-    aliases: string[];
-    codes: {
-        id: number;
-        crs: string;
-        nlc: string;
-    };
+interface UserInputFormAreaArgs {
+    departureStation: StationInfo | undefined;
+    destinationStation: StationInfo | undefined;
+    setDepartureStation: React.Dispatch<React.SetStateAction<StationInfo | undefined>>;
+    setDestinationStation: React.Dispatch<React.SetStateAction<StationInfo | undefined>>;
+    handleSubmitStations: () => void;
 }
 
 const hardCodedStations: StationInfo[] = [
     {
         codes: {
             id: 3457,
-            crs: 'KGX',
+            crs: '1444',
             nlc: '6121',
         },
         name: 'London Kings Cross',
@@ -31,7 +28,7 @@ const hardCodedStations: StationInfo[] = [
     {
         codes: {
             id: 3458,
-            crs: 'EDB',
+            crs: 'HML',
             nlc: '6121',
         },
         name: 'Edinburgh',
@@ -56,20 +53,9 @@ const hardCodedStations: StationInfo[] = [
     },
 ];
 
-const UserInputFormArea: React.FC = () => {
+const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, destinationStation, setDepartureStation, setDestinationStation, handleSubmitStations }) => {
 
-    const [departureStation, setDepartureStation] = useState<StationInfo>();
-    const [destinationStation, setDestinationStation] = useState<StationInfo>();
     const [message, setMessage] = useState('Please select both stations');
-
-    const handleSubmitStations = () => {
-        window.open(
-            'https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/' +
-            departureStation?.codes.crs + '/' +
-            destinationStation?.codes.crs +
-            '/',
-        );
-    };
 
     useEffect(() => {
         if (!departureStation || !destinationStation) {

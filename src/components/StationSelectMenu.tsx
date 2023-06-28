@@ -1,5 +1,5 @@
 import React from 'react';
-import { StationInfo } from './UserInputFormArea';
+import { StationInfo } from './MainPage';
 
 interface StationSelectMenuArgs {
     label: string;
