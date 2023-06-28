@@ -5,6 +5,7 @@ const Station: React.FC = () => {
     const { id } = useParams();
     return (
         <div>
+            <h1> Under Construction! </h1>
             Station {id}!
         </div>
     );

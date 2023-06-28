@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import './App.css';
+import MainPage from './components/MainPage';
 import Station from './components/Station';
 import Stations from './components/Stations';
 
@@ -13,10 +14,8 @@ const App = () => (
        
                     <Route index element = { <Stations/> }/>
                 </Route>
+                <Route path = "/" element = { <MainPage/> }/>
             </Routes>
-            <footer>
-                <Link to = "/stations">Stations</Link>
-            </footer>
         </div>
     </BrowserRouter>
 );
