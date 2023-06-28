@@ -2,18 +2,15 @@ body {
   background-color: #CDC6AE;
   display: flex;
   flex-direction: column;
+  flex-wrap: wrap;
 }
 
-#user-area-form-container {
-  width: 40%;
-}
-
-#user-area-form {
+.user-area-form {
   background-color: #2589BD;
   color: white;
   width: fit-content;
   margin: 5% auto;
-  padding: 4%;
+  padding: 3%;
   border-radius: 20px;
   height: fit-content;
   display: flex;
@@ -41,19 +38,19 @@ body {
   font-size: 120%;
 }
 
-#station-submit-area {
+.station-submit-area {
   margin-top: 15px;
   display: flex;
   justify-content: space-between;
 }
 
-#station-submit-area .error-message{
+.station-submit-area .warning-message{
   margin: 20px 20px 0 20px;
   font-weight: bold;
   color: #ff1e00;
 }
 
-#station-select-submit {
+.station-select-submit {
   background-color: #020122;
   color: white;
   border: none;
@@ -64,13 +61,24 @@ body {
   opacity: 70%;
 }
 
-#station-select-submit:hover {
+.station-select-submit:hover {
   cursor: pointer;
   opacity: 100%;
 }
 
-#station-select-submit:disabled {
+.station-select-submit:disabled {
   cursor: not-allowed;
   opacity: 40%;
+}
+
+.train-board-container {
+  background-color: white;
+  color: #187795;
+
+  width: fit-content;
+  margin: 5% auto;
+  padding: 4%;
+  border-radius: 20px;
+  height: fit-content;
 }
 

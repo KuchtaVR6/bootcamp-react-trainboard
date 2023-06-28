@@ -84,7 +84,7 @@ const UserInputFormArea : React.FC = () => {
     },[departureStation,destinationStation]);
 
     return (
-        <div id = "user-area-form"> 
+        <div className = "user-area-form"> 
             <div className = 'station-select-menu'>
                 <StationSelectMenu 
                     label = 'Departures:' 
@@ -100,9 +100,9 @@ const UserInputFormArea : React.FC = () => {
                 />
             </div>
             
-            <div id = 'station-submit-area'>
-                <div className = 'error-message'>{errorMessage}</div>
-                <button id = 'station-select-submit' onClick = { handleSubmitStations } disabled = { errorMessage.length > 0 }>Submit</button>
+            <div className = 'station-submit-area'>
+                <div className = 'warning-message'>{errorMessage}</div>
+                <button className = 'station-select-submit' onClick = { handleSubmitStations } disabled = { errorMessage.length > 0 }>Submit</button>
             </div>
             
         </div>

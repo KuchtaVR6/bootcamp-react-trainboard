@@ -17,7 +17,7 @@ const StationSelectMenu: React.FC<StationSelectMenuArgs> = ({ label, stationList
             <select 
                 id = { 'station-selector-' + label }>
                 
-                <option label = " "></option>
+                <option label = " " style = { { display: 'none' } } selected = { true }></option>
 
                 {stationList.map((stationEntry) => {
                     if (!skipTheseStationIDs.includes(stationEntry.codes.id)) {
