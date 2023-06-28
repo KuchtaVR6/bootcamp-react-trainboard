@@ -6,12 +6,8 @@ const MainPage: React.FC = () => {
 
     return (
         <>
-            <div className = "user-area-form-container">
-                <UserInputFormArea />
-            </div>
-            <div className = "train-board-container">
-                <TrainBoard />
-            </div>
+            <UserInputFormArea />
+            <TrainBoard />
         </>
     );
 };

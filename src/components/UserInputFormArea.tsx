@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { fetchStations } from '../helpers/ApiCallHelper';
 import StationSelectMenu from './StationSelectMenu';
 
 export type StationInfo = {
-    name : string; 
-    latitude : number;
+    name: string;
+    latitude: number;
     longitude: number;
-    aliases : string[];
-    codes : {
-        id : number;
-        crs : string;
-        nlc : string;
+    aliases: string[];
+    codes: {
+        id: number;
+        crs: string;
+        nlc: string;
     };
 }
 
-const hardCodedStations : StationInfo[] = [
+const hardCodedStations: StationInfo[] = [
     {
-        codes : {
+        codes: {
             id: 3457,
             crs: 'KGX',
             nlc: '6121',
@@ -28,7 +29,7 @@ const hardCodedStations : StationInfo[] = [
         longitude: -0.122921342,
     },
     {
-        codes : {
+        codes: {
             id: 3458,
             crs: 'EDB',
             nlc: '6121',
@@ -41,7 +42,7 @@ const hardCodedStations : StationInfo[] = [
         longitude: -0.122921342,
     },
     {
-        codes : {
+        codes: {
             id: 3459,
             crs: 'DUR',
             nlc: '6121',
@@ -55,11 +56,11 @@ const hardCodedStations : StationInfo[] = [
     },
 ];
 
-const UserInputFormArea : React.FC = () => {
+const UserInputFormArea: React.FC = () => {
 
     const [departureStation, setDepartureStation] = useState<StationInfo>();
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
-    const [errorMessage, setErrorMessage] = useState('Please select both stations');
+    const [message, setErrorMessage] = useState('Please select both stations');
 
     const handleSubmitStations = () => {
         window.open(
@@ -70,11 +71,11 @@ const UserInputFormArea : React.FC = () => {
         );
     };
 
-    useEffect(()=>{
-        if(!departureStation || !destinationStation) {
+    useEffect(() => {
+        if (!departureStation || !destinationStation) {
             setErrorMessage('Please select both stations');
         } else {
-            if(departureStation.codes.id === destinationStation.codes.id) {
+            if (departureStation.codes.id === destinationStation.codes.id) {
                 setErrorMessage('Destination must be diffrent from the departure');
             } else {
                 setErrorMessage('');
@@ -84,27 +85,29 @@ const UserInputFormArea : React.FC = () => {
     },[departureStation,destinationStation]);
 
     return (
-        <div className = "user-area-form"> 
-            <div className = 'station-select-menu'>
-                <StationSelectMenu 
-                    label = 'Departures:' 
-                    stationList = { hardCodedStations } 
-                    setSelection = { setDepartureStation }
-                    skipTheseStationIDs = { [destinationStation?.codes.id] }
-                />
-                <StationSelectMenu 
-                    label = 'Destination:' 
-                    stationList = { hardCodedStations } 
-                    setSelection = { setDestinationStation }
-                    skipTheseStationIDs = { [departureStation?.codes.id] }
-                />
+        <div className = "user-area-form-container">
+            <div className = "user-area-form">
+                <div className = 'station-select-menu'>
+                    <StationSelectMenu
+                        label = 'Departures:'
+                        stationList = { hardCodedStations }
+                        setSelection = { setDepartureStation }
+                        skipTheseStationIDs = { [destinationStation?.codes.id] }
+                    />
+                    <StationSelectMenu
+                        label = 'Destination:'
+                        stationList = { hardCodedStations }
+                        setSelection = { setDestinationStation }
+                        skipTheseStationIDs = { [departureStation?.codes.id] }
+                    />
+                </div>
+
+                <div className = 'station-submit-area'>
+                    <div className = 'message'>{message}</div>
+                    <button className = 'station-select-submit' onClick = { handleSubmitStations } disabled = { message.length > 0 }>Submit</button>
+                </div>
+
             </div>
-            
-            <div className = 'station-submit-area'>
-                <div className = 'warning-message'>{errorMessage}</div>
-                <button className = 'station-select-submit' onClick = { handleSubmitStations } disabled = { errorMessage.length > 0 }>Submit</button>
-            </div>
-            
         </div>
     );
 };

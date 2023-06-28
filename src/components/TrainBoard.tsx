@@ -2,7 +2,7 @@ import React from 'react';
 
 const TrainBoard : React.FC = () => {
     return (
-        <div>
+        <div className = "train-board-container">
             Welcome
         </div>
     );

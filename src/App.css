@@ -44,7 +44,7 @@ body {
   justify-content: space-between;
 }
 
-.station-submit-area .warning-message{
+.station-submit-area .message{
   margin: 20px 20px 0 20px;
   font-weight: bold;
   color: #ff1e00;

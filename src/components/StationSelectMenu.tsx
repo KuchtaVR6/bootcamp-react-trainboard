@@ -15,7 +15,13 @@ const StationSelectMenu: React.FC<StationSelectMenuArgs> = ({ label, stationList
                 <span>{label}</span>
             </label>
             <select 
-                id = { 'station-selector-' + label }>
+                id = { 'station-selector-' + label }
+                onChange = { (event) => {
+                    setSelection(stationList.find((station) => {
+                        return station.codes.id === Number(event.target.value);
+                    }));
+                } }
+            >
                 
                 <option label = " " style = { { display: 'none' } } selected = { true }></option>
 
@@ -24,8 +30,7 @@ const StationSelectMenu: React.FC<StationSelectMenuArgs> = ({ label, stationList
                         return (
                             <option 
                                 value = { stationEntry.codes.id } 
-                                key = { stationEntry.codes.id }
-                                onClick = { () => {setSelection(stationEntry);} }>
+                                key = { stationEntry.codes.id }>
                                 {stationEntry.name}
                             </option>
                         );
