@@ -15,17 +15,49 @@ export type StationInfo = {
     isSilverSeekStation : boolean;
 }
 
+export type JourneyInfo = {
+    originStation: StationInfo;
+    destinationStation: StationInfo;
+    departureTime: Date;
+    arrivalTime: Date;
+    status: JourneyStatus;
+    journeyDurationInMinutes: number;
+    isFastestJourney: boolean;
+    isOvertaken: boolean;
+}
+
+enum JourneyStatus {
+    normal,
+    delayed,
+    cancelled,
+    fully_reserved
+}
+
 const MainPage: React.FC = () => {
 
     const [departureStation, setDepartureStation] = useState<StationInfo>();
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
 
-    const handleSubmitStations = () => {
+    const [availableJourneys, setAvailableJourneys] = useState<JourneyInfo[]>([]);
 
+    const handleSubmitStations = () => {
         fetchFares(getStationId(departureStation), getStationId(destinationStation))
             .then((res) => res.json())
-            .then((json) => {
-                console.log(json);
+            .then((body) => {
+                setAvailableJourneys(
+                    body.outboundJourneys.map((journey : any) => {return {
+                        originStation: journey.originStation,
+                        destinationStation: journey.destinationStation,
+                        departureTime: journey.deparetureTime,
+                        arrivalTime: journey.arrivalTime,
+                        status: journey.status,
+                        journeyDurationInMinutes: journey.journeyDurationInMinutes,
+                        isFastestJourney: journey.isFastestJourney,
+                        isOvertaken: journey.isOvertaken,
+                    };}),
+                );
+                
+                console.log(body);
             });
     };
 
@@ -51,7 +83,7 @@ const MainPage: React.FC = () => {
                 setDestinationStation = { setDestinationStation }
                 handleSubmitStations = { handleSubmitStations }
             />
-            <TrainBoard />
+            <TrainBoard availableJourneys = { availableJourneys }/>
         </>
     );
 };
