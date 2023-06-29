@@ -1,42 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { fetchStations } from '../helpers/ApiCallHelper';
+import { StationInfo } from './MainPage';
 import StationSelectMenu from './StationSelectMenu';
 
-export type StationInfo = {
-    name: string;
-    latitude: number;
-    longitude: number;
-    aliases: string[];
-    id: number;
-    crs: string;
-    nlc: string;
-    isGrownStation : boolean; 
-    isSilverSeekStation : boolean;
+interface UserInputFormAreaArgs {
+    departureStation: StationInfo | undefined;
+    destinationStation: StationInfo | undefined;
+    setDepartureStation: React.Dispatch<React.SetStateAction<StationInfo | undefined>>;
+    setDestinationStation: React.Dispatch<React.SetStateAction<StationInfo | undefined>>;
+    handleSubmitStations: () => void;
 }
 
-const UserInputFormArea: React.FC = () => {
+const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, destinationStation, setDepartureStation, setDestinationStation, handleSubmitStations }) => {
 
-    const [departureStation, setDepartureStation] = useState<StationInfo>();
-    const [destinationStation, setDestinationStation] = useState<StationInfo>();
     const [message, setMessage] = useState('Please select both stations');
-
     const [stationList, setStationList] = useState<StationInfo[]>([]);
-
-    const handleSubmitStations = () => {
-        window.open(
-            'https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/' +
-            departureStation?.crs + '/' +
-            destinationStation?.crs +
-            '/',
-        );
-    };
 
     useEffect(() => {
         if (!departureStation || !destinationStation) {
             setMessage('Please select both stations');
         } else {
             if (departureStation.id === destinationStation.id) {
-                setErrorMessage('Destination must be diffrent from the departure');
+                setMessage('Destination must be diffrent from the departure');
             } else {
                 setMessage('');
             }
