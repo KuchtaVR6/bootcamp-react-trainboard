@@ -1,5 +1,4 @@
 import React from 'react';
-import { CompactStationInfo } from '../MainPage';
 
 interface TimeDisplayArgs {
     dateTime: Date;

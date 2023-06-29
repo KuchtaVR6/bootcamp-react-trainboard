@@ -13,10 +13,23 @@ interface JourneyDisplayArgs {
 
 const JourneyDisplay: React.FC<JourneyDisplayArgs> = ({ journeyInfo }) => {
 
+    const minutesToHoursAndMinutes = (minutes : number): string => {
+        if (minutes < 60) {
+            return minutes + ' min';
+        } else {
+            const hours  = Math.floor(minutes / 60);
+            const remainingMinutes = minutes % 60;
+            return hours + 'h ' + remainingMinutes + 'min';
+        }
+    };
+
     return (
-        <div className = "journey-display" style = { { backgroundColor: journeyInfo.isFastestJourney ? '#bde8ae' : journeyInfo.isOvertaken ? '#e2db6f' : 'white' } }>
+        <div className = "journey-display" 
+            style = { { backgroundColor: journeyInfo.isFastestJourney ? '#bde8ae' : journeyInfo.isOvertaken ? '#e2db6f' : 'white' } }>
+
             {journeyInfo.isFastestJourney && <div className = 'fastest-train-tag'><SiPuma/>Fastest Train</div>}
             {journeyInfo.isOvertaken && <div className = 'slowest-train-tag'><GiSnail/> Slow Train</div>}
+
             <div className = 'first-row'>
                 <StatusDisplay status = { journeyInfo.status }/>
                 <div className = "route-display">
@@ -25,11 +38,12 @@ const JourneyDisplay: React.FC<JourneyDisplayArgs> = ({ journeyInfo }) => {
                     <StationDisplay stationInfo = { journeyInfo.destinationStation } />
                 </div>
             </div>
+
             <div className = 'duration-display'>
                 <HiClock />
                 <TimeDisplay dateTime = { journeyInfo.departureTime } />
                 <span className = 'area-between'>
-                    {journeyInfo.journeyDurationInMinutes} mins
+                    {minutesToHoursAndMinutes(journeyInfo.journeyDurationInMinutes)}
                     <hr />
                 </span>
                 <TimeDisplay dateTime = { journeyInfo.arrivalTime } />

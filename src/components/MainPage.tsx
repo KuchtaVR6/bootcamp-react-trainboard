@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { fetchFares } from '../helpers/ApiCallHelper';
 import TrainBoard from './TrainBoard';
 import UserInputFormArea from './UserInputFormArea';
@@ -36,26 +36,27 @@ const MainPage: React.FC = () => {
 
     const [departureStation, setDepartureStation] = useState<StationInfo>();
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
-
     const [availableJourneys, setAvailableJourneys] = useState<JourneyInfo[]>([]);
+
+    const handleBodyFromFareFetch = (body: any) => {
+        setAvailableJourneys(
+            body.outboundJourneys.map((journey : any) => {return {
+                originStation: journey.originStation,
+                destinationStation: journey.destinationStation,
+                departureTime: new Date(journey.departureTime),
+                arrivalTime: new Date(journey.arrivalTime),
+                status: journey.status,
+                journeyDurationInMinutes: journey.journeyDurationInMinutes,
+                isFastestJourney: journey.isFastestJourney,
+                isOvertaken: journey.isOvertaken,
+            };}),
+        );
+    };
 
     const handleSubmitStations = () => {
         fetchFares(getStationId(departureStation), getStationId(destinationStation))
             .then((res) => res.json())
-            .then((body) => {
-                setAvailableJourneys(
-                    body.outboundJourneys.map((journey : any) => {return {
-                        originStation: journey.originStation,
-                        destinationStation: journey.destinationStation,
-                        departureTime: new Date(journey.departureTime),
-                        arrivalTime: new Date(journey.arrivalTime),
-                        status: journey.status,
-                        journeyDurationInMinutes: journey.journeyDurationInMinutes,
-                        isFastestJourney: journey.isFastestJourney,
-                        isOvertaken: journey.isOvertaken,
-                    };}),
-                );
-            });
+            .then(handleBodyFromFareFetch);
     };
 
     const getStationId = (station: StationInfo | undefined): string => {
@@ -80,7 +81,7 @@ const MainPage: React.FC = () => {
                 setDestinationStation = { setDestinationStation }
                 handleSubmitStations = { handleSubmitStations }
             />
-            <TrainBoard awaitFetch = { false } awaitSearch = { false } availableJourneys = { availableJourneys }/>
+            <TrainBoard isFetching = { false } isSearching = { false } availableJourneys = { availableJourneys }/>
         </div>
     );
 };

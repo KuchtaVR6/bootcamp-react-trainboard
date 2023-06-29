@@ -76,9 +76,7 @@ body {
 .train-board-container {
   background-color: white;
   color: #187795;
-
   word-wrap: break-word;
-
   width: fit-content;
   max-width: 40%;
   margin: 1% auto 0%;
@@ -112,9 +110,6 @@ body {
   padding: 5px 14px 5px 10px;
   border-radius: 5px;
   margin: 3px 0 0 3px;
-}
-
-.status-container .status-text {
   font-size: 90%;
   font-weight: lighter;
   font-style: italic;

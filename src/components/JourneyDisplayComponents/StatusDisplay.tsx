@@ -8,31 +8,20 @@ interface StatusArgs {
 
 const StatusDisplay: React.FC<StatusArgs> = ({ status }) => {
 
-    status = 'cancelled';
-
     return (
         <span className = 'status-container' 
             style = { { backgroundColor: status!=='normal'? '#F4442E' : '#187795' } }>
+
             {status === 'normal' ?
-                <HiCheckCircle /> :
+                <><HiCheckCircle /> On Time</> :
                 status === 'cancelled' ?
-                    <HiXCircle /> :
+                    <><HiXCircle /> Cancelled</> :
                     status === 'fully_reserved' ?
-                        <MdGroupOff /> :
-                        <HiExclamationCircle />
+                        <><MdGroupOff /> Fully Reserved</> :
+                        status === 'delayed' ?
+                            <><HiExclamationCircle/> Delayed</> :
+                            <><HiExclamationCircle />{status}</>
             }
-            <span className = 'status-text'>
-                {status === 'normal' ?
-                    ' On time' :
-                    status === 'delayed' ?
-                        ' Delayed' :
-                        status === 'cancelled' ?
-                            ' Cancelled' :
-                            status === 'fully_reserved' ?
-                                ' Fully Reserved' :
-                                status
-                }
-            </span>
         </span>
     );
 };

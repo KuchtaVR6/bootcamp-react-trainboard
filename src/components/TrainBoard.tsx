@@ -3,12 +3,12 @@ import JourneyDisplay from './JourneyDisplay';
 import { JourneyInfo } from './MainPage';
 
 interface TrainBoardArgs {
-    awaitSearch: boolean;
-    awaitFetch: boolean;
+    isSearching: boolean;
+    isFetching: boolean;
     availableJourneys: JourneyInfo[];
 }
 
-const TrainBoard: React.FC<TrainBoardArgs> = ({ awaitSearch, awaitFetch, availableJourneys }) => {
+const TrainBoard: React.FC<TrainBoardArgs> = ({ isSearching, isFetching, availableJourneys }) => {
     if (availableJourneys.length > 0) {
         return (
             <div className = "train-board-container">
@@ -23,19 +23,17 @@ const TrainBoard: React.FC<TrainBoardArgs> = ({ awaitSearch, awaitFetch, availab
             </div>
         );
     }
-    else if (awaitSearch) {
+    else if (isSearching) {
         return (
             <div className = "train-board-container">
                 <h3>Please search and press Submit</h3>
-            
             </div>
         );
     }
-    else if (awaitFetch) {
+    else if (isFetching) {
         return (
             <div className = "train-board-container">
                 <h3>Loading...</h3>
-
             </div>
         );
     }
