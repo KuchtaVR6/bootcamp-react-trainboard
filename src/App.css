@@ -91,9 +91,13 @@ body {
   margin: 0;
 }
 
-.fastest-train-tag {
+.fastest-train-tag, .slowest-train-tag {
   font-style: italic;
   margin-left: 5px;
+}
+
+.fastest-train-tag svg {
+  transform: scaleX(-1);
 }
 
 .journey-display .first-row {
@@ -136,6 +140,9 @@ body {
 .time-display {
   font-size: 170%;
   font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .time-display .date {
