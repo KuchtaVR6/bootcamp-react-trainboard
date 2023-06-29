@@ -15,9 +15,15 @@ export type StationInfo = {
     isSilverSeekStation : boolean;
 }
 
+export type CompactStationInfo = {
+    displayName: string;
+    nlc : string;
+    crs : string;
+}
+
 export type JourneyInfo = {
-    originStation: StationInfo;
-    destinationStation: StationInfo;
+    originStation: CompactStationInfo;
+    destinationStation: CompactStationInfo;
     departureTime: Date;
     arrivalTime: Date;
     status: JourneyStatus;
@@ -48,7 +54,7 @@ const MainPage: React.FC = () => {
                     body.outboundJourneys.map((journey : any) => {return {
                         originStation: journey.originStation,
                         destinationStation: journey.destinationStation,
-                        departureTime: journey.deparetureTime,
+                        departureTime: journey.departureTime,
                         arrivalTime: journey.arrivalTime,
                         status: journey.status,
                         journeyDurationInMinutes: journey.journeyDurationInMinutes,
@@ -56,8 +62,6 @@ const MainPage: React.FC = () => {
                         isOvertaken: journey.isOvertaken,
                     };}),
                 );
-                
-                console.log(body);
             });
     };
 
@@ -75,7 +79,7 @@ const MainPage: React.FC = () => {
     };
 
     return (
-        <>
+        <div className = "main-page">
             <UserInputFormArea 
                 departureStation = { departureStation }
                 destinationStation = { destinationStation }
@@ -83,8 +87,8 @@ const MainPage: React.FC = () => {
                 setDestinationStation = { setDestinationStation }
                 handleSubmitStations = { handleSubmitStations }
             />
-            <TrainBoard availableJourneys = { availableJourneys }/>
-        </>
+            <TrainBoard awaitFetch = { false } awaitSearch = { false } availableJourneys = { availableJourneys }/>
+        </div>
     );
 };
 
