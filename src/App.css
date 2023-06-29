@@ -85,6 +85,27 @@ body {
   height: fit-content;
 }
 
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.train-board-container-loading {
+  margin-top: 20%;
+  background-color: #CDC6AE;
+}
+
+.train-board-container .loader {
+  padding: 2em;
+  width: 5em;
+  height: 5em;
+  animation: rotating 2s ease-in-out infinite;
+}
+
 .train-board-container > hr, .journey-display > hr {
   margin: 0;
 }

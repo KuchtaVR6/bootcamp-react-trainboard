@@ -36,6 +36,9 @@ const MainPage: React.FC = () => {
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
     const [availableJourneys, setAvailableJourneys] = useState<JourneyInfo[]>([]);
 
+    const [isSearching, setIsSearching] = useState<boolean>(true);
+    const [isFetching, setIsFetching] = useState<boolean>(false);
+
     const setAvailableFaresWithFetchResponse = (body: any) => {
         setAvailableJourneys(
             body.outboundJourneys.map((journey : any) => {return {
@@ -51,19 +54,23 @@ const MainPage: React.FC = () => {
         );
     };
 
-    const handleSubmitStations = () => {
-        fetchFares(getStationId(departureStation), getStationId(destinationStation))
+    const handleSubmitStations = async () => {
+        setAvailableJourneys([]);
+        setIsFetching(true);
+        setIsSearching(false);        
+        await fetchFares(getStationId(departureStation), getStationId(destinationStation))
             .then((res) => res.json())
             .then(setAvailableFaresWithFetchResponse);
+        setIsFetching(false);
     };
 
     const getStationId = (station: StationInfo | undefined): string => {
         if (!station) {
             throw new Error('Abort: Station not selected.');
         }
-        if (station.crs.length > 0) {
+        if (station.crs && station.crs.length > 0) {
             return station.crs;
-        } else if (station.nlc.length > 0) {
+        } else if (station.nlc && station.nlc.length > 0) {
             return station.nlc;
         } else {
             throw new Error('Abort: Station invalid.');
@@ -79,7 +86,7 @@ const MainPage: React.FC = () => {
                 setDestinationStation = { setDestinationStation }
                 handleSubmitStations = { handleSubmitStations }
             />
-            <TrainBoard isFetching = { false } isSearching = { false } availableJourneys = { availableJourneys }/>
+            <TrainBoard isFetching = { isFetching } isSearching = { isSearching } availableJourneys = { availableJourneys }/>
         </div>
     );
 };
