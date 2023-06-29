@@ -17,12 +17,14 @@ export type StationInfo = {
 
 const UserInputFormArea: React.FC = () => {
 
+    // converts to YYYY-MM-DDTHH:MM
     const yearFirstFormat = (date: Date) => {
         const incorrectFormat = date.toLocaleString('en-GB');
         const correctFormat = incorrectFormat.replace(/(\d+)\/(\d+)\/(\d+),\W(\d+:\d+):\d+$/, '$3-$2-$1T$4');
         return correctFormat;
     };
 
+    // converts to YYYY-MM-DDTHH:MM:00.000Z as the exact second and milisecond is redundant
     const yearFirstToAPIFormat = (date: Date) => {
         return yearFirstFormat(date) + ':00.000Z';
     };
@@ -113,7 +115,6 @@ const UserInputFormArea: React.FC = () => {
                         setSelection = { setDestinationStation }
                         skipTheseStationIDs = { [departureStation?.id] }
                     />
-
                     <label htmlFor = 'date-selection'>Departure time:</label>
                     <div>
                         <input
@@ -121,9 +122,7 @@ const UserInputFormArea: React.FC = () => {
                             id = "date-selection"
                             ref = { timeRef }
                             type = 'datetime-local'
-                            onChange = { (event) => {
-                                setSelectedDate(yearFirstToAPIFormat(new Date(event.target.value)));
-                            } }
+                            onChange = { (event) => {setSelectedDate(yearFirstToAPIFormat(new Date(event.target.value)));} }
                         />
                         <button className = 'reset-date-selection' onClick = { resetTime }>Today</button>
                     </div>
