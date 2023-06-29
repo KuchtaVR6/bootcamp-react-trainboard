@@ -98,7 +98,15 @@ body {
   transform: scaleX(-1);
 }
 
-.journey-display .first-row {
+.fast-train {
+  background-color: #bde8ae;
+}
+
+.slow-train {
+  background-color: #e2db6f;
+}
+
+.journey-display .status-and-route {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -113,6 +121,10 @@ body {
   font-size: 90%;
   font-weight: lighter;
   font-style: italic;
+}
+
+.warning-tag {
+  background-color: #F4442E
 }
 
 .station-display {

@@ -1,8 +1,10 @@
+const authHeaders = {
+    'X-API-KEY': `${process.env.REACT_APP_X_API_KEY}`,
+};
+
 export const fetchStations = () => {
     return fetch('https://mobile-api-softwire2.lner.co.uk/v1/stations', {
-        headers: {
-            'X-API-KEY': `${process.env.REACT_APP_X_API_KEY}`,
-        },
+        headers: authHeaders,
     });
 };
 
@@ -12,8 +14,6 @@ export const fetchFares = (originId: string, destinationId: string) => {
     const numberOfChildren = 0;
     return fetch(
         `https://mobile-api-softwire2.lner.co.uk/v1/fares?originStation=${originId}&destinationStation=${destinationId}&outboundDateTime=${dateTime}&numberOfAdults=${numberOfAdults}&numberOfChildren=${numberOfChildren}` , {
-            headers: {
-                'X-API-KEY': `${process.env.REACT_APP_X_API_KEY}`,
-            },
+            headers: authHeaders,
         });
 };

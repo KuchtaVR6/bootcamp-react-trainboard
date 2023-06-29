@@ -11,8 +11,6 @@ export type StationInfo = {
     id: number;
     crs: string;
     nlc: string;
-    isGrownStation : boolean; 
-    isSilverSeekStation : boolean;
 }
 
 export type CompactStationInfo = {
@@ -38,7 +36,7 @@ const MainPage: React.FC = () => {
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
     const [availableJourneys, setAvailableJourneys] = useState<JourneyInfo[]>([]);
 
-    const handleBodyFromFareFetch = (body: any) => {
+    const setAvailableFaresWithFetchResponse = (body: any) => {
         setAvailableJourneys(
             body.outboundJourneys.map((journey : any) => {return {
                 originStation: journey.originStation,
@@ -56,7 +54,7 @@ const MainPage: React.FC = () => {
     const handleSubmitStations = () => {
         fetchFares(getStationId(departureStation), getStationId(destinationStation))
             .then((res) => res.json())
-            .then(handleBodyFromFareFetch);
+            .then(setAvailableFaresWithFetchResponse);
     };
 
     const getStationId = (station: StationInfo | undefined): string => {

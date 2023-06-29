@@ -9,9 +9,7 @@ interface StatusArgs {
 const StatusDisplay: React.FC<StatusArgs> = ({ status }) => {
 
     return (
-        <span className = 'status-container' 
-            style = { { backgroundColor: status!=='normal'? '#F4442E' : '#187795' } }>
-
+        <span className = { 'status-container ' + (status!=='normal'? 'warning-tag' : '') }>
             {status === 'normal' ?
                 <><HiCheckCircle /> On Time</> :
                 status === 'cancelled' ?

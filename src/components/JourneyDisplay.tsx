@@ -24,13 +24,13 @@ const JourneyDisplay: React.FC<JourneyDisplayArgs> = ({ journeyInfo }) => {
     };
 
     return (
-        <div className = "journey-display" 
-            style = { { backgroundColor: journeyInfo.isFastestJourney ? '#bde8ae' : journeyInfo.isOvertaken ? '#e2db6f' : 'white' } }>
+        <div 
+            className = { 'journey-display ' + (journeyInfo.isFastestJourney ? 'fast-train' : journeyInfo.isOvertaken ? 'slow-train' : '' ) }>
 
             {journeyInfo.isFastestJourney && <div className = 'fastest-train-tag'><SiPuma/>Fastest Train</div>}
             {journeyInfo.isOvertaken && <div className = 'slowest-train-tag'><GiSnail/> Slow Train</div>}
 
-            <div className = 'first-row'>
+            <div className = 'status-and-route'>
                 <StatusDisplay status = { journeyInfo.status }/>
                 <div className = "route-display">
                     <StationDisplay stationInfo = { journeyInfo.originStation } />
