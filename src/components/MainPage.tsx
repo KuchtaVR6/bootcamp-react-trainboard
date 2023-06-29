@@ -26,17 +26,10 @@ export type JourneyInfo = {
     destinationStation: CompactStationInfo;
     departureTime: Date;
     arrivalTime: Date;
-    status: JourneyStatus;
+    status: string;
     journeyDurationInMinutes: number;
     isFastestJourney: boolean;
     isOvertaken: boolean;
-}
-
-enum JourneyStatus {
-    normal,
-    delayed,
-    cancelled,
-    fully_reserved
 }
 
 const MainPage: React.FC = () => {
@@ -54,8 +47,8 @@ const MainPage: React.FC = () => {
                     body.outboundJourneys.map((journey : any) => {return {
                         originStation: journey.originStation,
                         destinationStation: journey.destinationStation,
-                        departureTime: journey.departureTime,
-                        arrivalTime: journey.arrivalTime,
+                        departureTime: new Date(journey.departureTime),
+                        arrivalTime: new Date(journey.arrivalTime),
                         status: journey.status,
                         journeyDurationInMinutes: journey.journeyDurationInMinutes,
                         isFastestJourney: journey.isFastestJourney,
