@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetchStations } from '../helpers/ApiCallHelper';
+import NumberOfPassangersSelect from './NumberOfPassangersSelect';
 import StationSelectMenu from './StationSelectMenu';
 
 export type StationInfo = {
@@ -22,6 +23,9 @@ const UserInputFormArea: React.FC = () => {
 
     const [stationList, setStationList] = useState<StationInfo[]>([]);
 
+    const timeRef = useRef<HTMLInputElement>(null); 
+    const firstRender = useRef<boolean>(true);
+
     const handleSubmitStations = () => {
         window.open(
             'https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/' +
@@ -36,7 +40,7 @@ const UserInputFormArea: React.FC = () => {
             setMessage('Please select both stations');
         } else {
             if (departureStation.id === destinationStation.id) {
-                setErrorMessage('Destination must be diffrent from the departure');
+                setMessage('Destination must be diffrent from the departure');
             } else {
                 setMessage('');
             }
@@ -55,8 +59,21 @@ const UserInputFormArea: React.FC = () => {
         });
     };
 
+    const resetTime = () => {
+        if (timeRef.current) {
+            const now = new Date();
+            const incorrectFormat = now.toLocaleString('en-GB');
+            const correctFormat = incorrectFormat.replace(/(\d+)\/(\d+)\/(\d+),\W(\d+:\d+):\d+$/, '$3-$2-$1T$4');
+            timeRef.current.value = correctFormat;
+        }
+    };
+    
     useEffect(() => {
-        fetchStations().then(handleStationResponse);
+        if (firstRender.current){
+            firstRender.current = false;
+            fetchStations().then(handleStationResponse);
+            resetTime();
+        }
     });
 
     return (
@@ -75,6 +92,16 @@ const UserInputFormArea: React.FC = () => {
                         setSelection = { setDestinationStation }
                         skipTheseStationIDs = { [departureStation?.id] }
                     />
+
+                    <label htmlFor = 'dateSelection'>Departure time:</label>
+                    <input 
+                        className = 'dateSelection'
+                        id = "dateSelection" 
+                        ref = { timeRef } 
+                        type = 'datetime-local'/>
+
+                    <NumberOfPassangersSelect passangerType = 'adults' />
+                    <NumberOfPassangersSelect passangerType = 'children' />
                 </div>
 
                 <div className = 'station-submit-area'>
