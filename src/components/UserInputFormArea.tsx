@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchStations } from '../helpers/ApiCallHelper';
 import { StationInfo } from './MainPage';
+import NumberOfPassengersSelect from './NumberOfPassangersSelect';
 import StationSelectMenu from './StationSelectMenu';
 
 interface UserInputFormAreaArgs {
@@ -23,8 +24,6 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
         return convertToHTMLDateInputFormat(date) + ':00.000Z';
     };
 
-    const [departureStation, setDepartureStation] = useState<StationInfo>();
-    const [destinationStation, setDestinationStation] = useState<StationInfo>();
     const [selectedDate, setSelectedDate] = useState<string>(convertsToLNERAPIDateFormat(new Date()));
     const [numberOfAdults, setNumberOfAdults] = useState<number>(0);
     const [numberOfChildren, setNumberOfChildren] = useState<number>(0);
@@ -34,15 +33,6 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
 
     const dateTimeInputElement = useRef<HTMLInputElement>(null);
     const firstRender = useRef<boolean>(true);
-
-    const handleSubmitStations = () => {
-        window.open(
-            'https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/' +
-            departureStation?.crs + '/' +
-            destinationStation?.crs +
-            '/',
-        );
-    };
 
     const getAdjustedTimeByDeltaMinutes = (date: Date, deltaInMinutes: number): Date => {
         return new Date(date.getTime() + deltaInMinutes * 60 * 1000);
@@ -93,6 +83,7 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
     const resetTimeToNow = () => {
         if (dateTimeInputElement.current) {
             dateTimeInputElement.current.value = convertToHTMLDateInputFormat(new Date());
+            setSelectedDate(convertsToLNERAPIDateFormat(new Date()));
         }
     };
 
