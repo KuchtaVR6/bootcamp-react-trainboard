@@ -22,8 +22,8 @@ export type CompactStationInfo = {
 export type JourneyInfo = {
     originStation: CompactStationInfo;
     destinationStation: CompactStationInfo;
-    departureTime: Date;
-    arrivalTime: Date;
+    departureTime: string;
+    arrivalTime: string;
     status: string;
     journeyDurationInMinutes: number;
     isFastestJourney: boolean;
@@ -39,19 +39,8 @@ const MainPage: React.FC = () => {
     const [isSearching, setIsSearching] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(false);
 
-    const setAvailableFaresWithFetchResponse = (body: any) => {
-        setAvailableJourneys(
-            body.outboundJourneys.map((journey : any) => {return {
-                originStation: journey.originStation,
-                destinationStation: journey.destinationStation,
-                departureTime: new Date(journey.departureTime),
-                arrivalTime: new Date(journey.arrivalTime),
-                status: journey.status,
-                journeyDurationInMinutes: journey.journeyDurationInMinutes,
-                isFastestJourney: journey.isFastestJourney,
-                isOvertaken: journey.isOvertaken,
-            };}),
-        );
+    const setAvailableFaresWithFetchResponse = (body: {outboundJourneys : JourneyInfo[]}) => {
+        setAvailableJourneys(body.outboundJourneys);
     };
 
     const handleSubmitStations = async () => {

@@ -41,12 +41,12 @@ const JourneyDisplay: React.FC<JourneyDisplayArgs> = ({ journeyInfo }) => {
 
             <div className = 'duration-display'>
                 <HiClock />
-                <TimeDisplay dateTime = { journeyInfo.departureTime } />
+                <TimeDisplay dateTime = { new Date(journeyInfo.departureTime) } />
                 <span className = 'area-between'>
                     {minutesToHoursAndMinutes(journeyInfo.journeyDurationInMinutes)}
                     <hr />
                 </span>
-                <TimeDisplay dateTime = { journeyInfo.arrivalTime } />
+                <TimeDisplay dateTime = { new Date(journeyInfo.arrivalTime) } />
             </div>
             <hr />
         </div>

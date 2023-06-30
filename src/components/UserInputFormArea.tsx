@@ -33,7 +33,7 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
     };
 
     const handleStationResponse = async (response: Response) => {
-        const body = await response.json();
+        const body: {stations: StationInfo[]} = await response.json();
         if (body.stations) {
             setStationList(body.stations.sort(stationSort));
         }
