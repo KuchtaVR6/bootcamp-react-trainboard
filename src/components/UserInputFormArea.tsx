@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { fetchStations } from '../helpers/ApiCallHelper';
 import { StationInfo } from './MainPage';
 import StationSelectMenu from './StationSelectMenu';
@@ -12,36 +12,96 @@ interface UserInputFormAreaArgs {
 }
 
 const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, destinationStation, setDepartureStation, setDestinationStation, handleSubmitStations }) => {
+  
+    // converts to YYYY-MM-DDTHH:MM
+    const convertToHTMLDateInputFormat = (date: Date) => {
+        return date.toLocaleString('en-GB').replace(/(\d+)\/(\d+)\/(\d+),\W(\d+:\d+):\d+$/, '$3-$2-$1T$4');
+    };
+
+    // converts to YYYY-MM-DDTHH:MM:00.000Z as the exact second and milisecond is redundant
+    const convertsToLNERAPIDateFormat = (date: Date) => {
+        return convertToHTMLDateInputFormat(date) + ':00.000Z';
+    };
+
+    const [departureStation, setDepartureStation] = useState<StationInfo>();
+    const [destinationStation, setDestinationStation] = useState<StationInfo>();
+    const [selectedDate, setSelectedDate] = useState<string>(convertsToLNERAPIDateFormat(new Date()));
+    const [numberOfAdults, setNumberOfAdults] = useState<number>(0);
+    const [numberOfChildren, setNumberOfChildren] = useState<number>(0);
 
     const [message, setMessage] = useState('Please select both stations');
     const [stationList, setStationList] = useState<StationInfo[]>([]);
 
-    useEffect(() => {
-        if (!departureStation || !destinationStation) {
-            setMessage('Please select both stations');
-        } else {
-            if (departureStation.id === destinationStation.id) {
-                setMessage('Destination must be diffrent from the departure');
-            } else {
-                setMessage('');
+    const dateTimeInputElement = useRef<HTMLInputElement>(null);
+    const firstRender = useRef<boolean>(true);
+
+    const handleSubmitStations = () => {
+        window.open(
+            'https://www.lner.co.uk/travel-information/travelling-now/live-train-times/depart/' +
+            departureStation?.crs + '/' +
+            destinationStation?.crs +
+            '/',
+        );
+    };
+
+    const getAdjustedTimeByDeltaMinutes = (date: Date, deltaInMinutes: number): Date => {
+        return new Date(date.getTime() + deltaInMinutes * 60 * 1000);
+    };
+
+    const validateFormChecks : Map<() => boolean, string> = new Map([
+        [() => {return !departureStation;}, 'Please select the departure station.'],
+        [() => {return !destinationStation;}, 'Please select the destination station.'],
+        [() => {return departureStation?.id === destinationStation?.id;}, 'Destination must be diffrent from the departure.'],
+        [() => {
+            const selectedTimeAsDate = new Date(selectedDate.slice(0, -3));
+            return isNaN(selectedTimeAsDate.getTime());
+        }, 'Invalid date selected.'],
+        [() => {
+            const selectedTimeAsDate = new Date(selectedDate.slice(0, -3));
+            const earliestSearchableTime = getAdjustedTimeByDeltaMinutes(new Date(), -60);
+            return selectedTimeAsDate < earliestSearchableTime;
+        }, 'Please select a date in the future.'],
+        [() => {return numberOfAdults + numberOfChildren <= 0;}, 'Please input at least one passenger.'],
+    ]);
+
+    const verifyFormInputsAndSetMessage = () => {
+        setMessage('');
+        for (const [check, error] of Array.from(validateFormChecks)) {
+            if (check()) {
+                setMessage(error); 
+                break;
             }
         }
-    }, [departureStation, destinationStation]);
+    };
 
-    const stationSort = (stationOne : StationInfo, stationTwo : StationInfo)=>{
+    useEffect(() => {
+        verifyFormInputsAndSetMessage();
+    }, [departureStation, destinationStation, selectedDate, numberOfAdults, numberOfChildren]);
+
+    const stationSort = (stationOne: StationInfo, stationTwo: StationInfo) => {
         return stationOne.name.toLowerCase() > stationTwo.name.toLowerCase() ? 1 : -1;
     };
 
-    const handleStationResponse = (response : Response) => {
+    const handleStationResponse = (response: Response) => {
         response.json().then((body) => {
-            if(body.stations){
+            if (body.stations) {
                 setStationList(body.stations.sort(stationSort));
             }
         });
     };
 
+    const resetTimeToNow = () => {
+        if (dateTimeInputElement.current) {
+            dateTimeInputElement.current.value = convertToHTMLDateInputFormat(new Date());
+        }
+    };
+
     useEffect(() => {
-        fetchStations().then(handleStationResponse);
+        if (firstRender.current) {
+            firstRender.current = false;
+            fetchStations().then(handleStationResponse);
+            resetTimeToNow();
+        }
     });
 
     return (
@@ -60,6 +120,26 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
                         setSelection = { setDestinationStation }
                         skipTheseStationIDs = { [departureStation?.id] }
                     />
+                    <label htmlFor = 'date-selection'>Departure time:</label>
+                    <div>
+                        <input
+                            className = 'date-selection'
+                            id = "date-selection"
+                            ref = { dateTimeInputElement }
+                            type = 'datetime-local'
+                            onChange = { (event) => {setSelectedDate(convertsToLNERAPIDateFormat(new Date(event.target.value)));} }
+                        />
+                        <button className = 'reset-date-selection' onClick = { resetTimeToNow }>Today</button>
+                    </div>
+
+                    <NumberOfPassengersSelect passengerType = 'adults'
+                        onChange = { (event) => {
+                            setNumberOfAdults(Number(event.target.value));
+                        } } />
+                    <NumberOfPassengersSelect passengerType = 'children'
+                        onChange = { (event) => {
+                            setNumberOfChildren(Number(event.target.value));
+                        } } />
                 </div>
 
                 <div className = 'station-submit-area'>

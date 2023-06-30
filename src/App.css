@@ -40,6 +40,18 @@ body {
   font-size: 120%;
 }
 
+.date-selection {
+  font-size: 120%;
+}
+.reset-date-selection {
+  margin: 0 0 0 5px;
+  font-size: 95%;
+}
+
+.passenger-input{
+  width: 3em;
+}
+
 .station-submit-area {
   margin-top: 15px;
   display: flex;
@@ -175,4 +187,3 @@ body {
   font-size: 70%;
   margin: 0 10px;
 }
-
