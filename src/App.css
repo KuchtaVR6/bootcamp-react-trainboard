@@ -1,5 +1,9 @@
 body {
   background-color: #CDC6AE;
+  background-image: url('/public/horizontal.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 .main-page {
@@ -195,5 +199,30 @@ body {
 .duration-display .area-between {
   font-size: 70%;
   margin: 0 10px;
+}
+
+
+@media (orientation: portrait) {
+
+  body {
+    background-image: url('/public/vertical.jpg');
+    background-repeat: no-repeat;
+    background-size: 100vh auto;
+    background-position: 0 0;
+  }
+
+  .main-page {
+    flex-direction: column;
+  }
+
+  .user-area-form {
+    margin: 5%;
+  }
+
+  .train-board-container {
+    max-width: 95%;
+    margin-top: 0%;
+  }
+
 }
 
