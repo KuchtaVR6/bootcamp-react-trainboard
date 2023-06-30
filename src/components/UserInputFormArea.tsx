@@ -1,19 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchStations } from '../helpers/ApiCallHelper';
-import { StationInfo } from './MainPage';
+import { fetchFaresParameters, StationInfo } from './MainPage';
 import NumberOfPassengersSelect from './NumberOfPassangersSelect';
 import StationSelectMenu from './StationSelectMenu';
 
 interface UserInputFormAreaArgs {
-    departureStation: StationInfo | undefined;
-    destinationStation: StationInfo | undefined;
-    setDepartureStation: React.Dispatch<React.SetStateAction<StationInfo | undefined>>;
-    setDestinationStation: React.Dispatch<React.SetStateAction<StationInfo | undefined>>;
-    handleSubmitStations: () => void;
+    handleSubmitStations: (params: fetchFaresParameters) => void;
 }
 
-const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, destinationStation, setDepartureStation, setDestinationStation, handleSubmitStations }) => {
-  
+const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ handleSubmitStations }) => {
+
     // converts to YYYY-MM-DDTHH:MM
     const convertToHTMLDateInputFormat = (date: Date) => {
         return date.toLocaleString('en-GB').replace(/(\d+)\/(\d+)\/(\d+),\W(\d+:\d+):\d+$/, '$3-$2-$1T$4');
@@ -24,7 +20,9 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
         return convertToHTMLDateInputFormat(date) + ':00.000Z';
     };
 
-    const [selectedDate, setSelectedDate] = useState<string>(convertsToLNERAPIDateFormat(new Date()));
+    const [departureStation, setDepartureStation] = useState<StationInfo>();
+    const [destinationStation, setDestinationStation] = useState<StationInfo>();
+    const [selectedDateTime, setSelectedDate] = useState<string>(convertsToLNERAPIDateFormat(new Date()));
     const [numberOfAdults, setNumberOfAdults] = useState<number>(0);
     const [numberOfChildren, setNumberOfChildren] = useState<number>(0);
 
@@ -38,27 +36,27 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
         return new Date(date.getTime() + deltaInMinutes * 60 * 1000);
     };
 
-    const validateFormChecks : Map<() => boolean, string> = new Map([
-        [() => {return !departureStation;}, 'Please select the departure station.'],
-        [() => {return !destinationStation;}, 'Please select the destination station.'],
-        [() => {return departureStation?.id === destinationStation?.id;}, 'Destination must be diffrent from the departure.'],
+    const validateFormChecks: Map<() => boolean, string> = new Map([
+        [() => { return !departureStation; }, 'Please select the departure station.'],
+        [() => { return !destinationStation; }, 'Please select the destination station.'],
+        [() => { return departureStation?.id === destinationStation?.id; }, 'Destination must be diffrent from the departure.'],
         [() => {
-            const selectedTimeAsDate = new Date(selectedDate.slice(0, -3));
+            const selectedTimeAsDate = new Date(selectedDateTime.slice(0, -3));
             return isNaN(selectedTimeAsDate.getTime());
         }, 'Invalid date selected.'],
         [() => {
-            const selectedTimeAsDate = new Date(selectedDate.slice(0, -3));
+            const selectedTimeAsDate = new Date(selectedDateTime.slice(0, -3));
             const earliestSearchableTime = getAdjustedTimeByDeltaMinutes(new Date(), -60);
             return selectedTimeAsDate < earliestSearchableTime;
         }, 'Please select a date in the future.'],
-        [() => {return numberOfAdults + numberOfChildren <= 0;}, 'Please input at least one passenger.'],
+        [() => { return numberOfAdults + numberOfChildren <= 0; }, 'Please input at least one passenger.'],
     ]);
 
     const verifyFormInputsAndSetMessage = () => {
         setMessage('');
         for (const [check, error] of Array.from(validateFormChecks)) {
             if (check()) {
-                setMessage(error); 
+                setMessage(error);
                 break;
             }
         }
@@ -66,14 +64,14 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
 
     useEffect(() => {
         verifyFormInputsAndSetMessage();
-    }, [departureStation, destinationStation, selectedDate, numberOfAdults, numberOfChildren]);
+    }, [departureStation, destinationStation, selectedDateTime, numberOfAdults, numberOfChildren]);
 
     const stationSort = (stationOne: StationInfo, stationTwo: StationInfo) => {
         return stationOne.name.toLowerCase() > stationTwo.name.toLowerCase() ? 1 : -1;
     };
 
     const handleStationResponse = async (response: Response) => {
-        const body: {stations: StationInfo[]} = await response.json();
+        const body: { stations: StationInfo[] } = await response.json();
         if (body.stations) {
             setStationList(body.stations.sort(stationSort));
         }
@@ -122,7 +120,7 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
                             id = "date-selection"
                             ref = { dateTimeInputElement }
                             type = 'datetime-local'
-                            onChange = { (event) => {setSelectedDate(convertsToLNERAPIDateFormat(new Date(event.target.value)));} }
+                            onChange = { (event) => { setSelectedDate(convertsToLNERAPIDateFormat(new Date(event.target.value))); } }
                         />
                         <button className = 'reset-date-selection' onClick = { resetTimeToNow }>Today</button>
                     </div>
@@ -139,7 +137,13 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
 
                 <div className = 'station-submit-area'>
                     <div className = 'message'>{message}</div>
-                    <button className = 'station-select-submit' onClick = { handleSubmitStations } disabled = { message.length > 0 }>Submit</button>
+                    <button className = 'station-select-submit' 
+                        onClick = { () => handleSubmitStations(
+                            {
+                                departureStation : departureStation, destinationStation : destinationStation, selectedDateTimeString: selectedDateTime, selectedNumberOfAdults: numberOfAdults, selectedNumberOfChildren: numberOfChildren,
+                            },
+                        ) } 
+                        disabled = { message.length > 0 }>Submit</button>
                 </div>
 
             </div>

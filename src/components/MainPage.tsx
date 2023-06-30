@@ -30,13 +30,15 @@ export type JourneyInfo = {
     isOvertaken: boolean;
 }
 
+export type fetchFaresParameters = {
+    departureStation : StationInfo | undefined; destinationStation : StationInfo | undefined; selectedDateTimeString: string; selectedNumberOfAdults: number; selectedNumberOfChildren: number;
+}
+
 const MainPage: React.FC = () => {
 
-    const [departureStation, setDepartureStation] = useState<StationInfo>();
-    const [destinationStation, setDestinationStation] = useState<StationInfo>();
-    const [availableJourneys, setAvailableJourneys] = useState<JourneyInfo[]>([]);
-    const [selectedNumberOfChildren, setSelectedNumberOfChildren] = useState<number>(0);
     const [selectedNumberOfAdults, setSelectedNumberOfAdults] = useState<number>(0);
+    const [selectedNumberOfChildren, setSelectedNumberOfChildren] = useState<number>(0);
+    const [availableJourneys, setAvailableJourneys] = useState<JourneyInfo[]>([]);
 
     const [isSearching, setIsSearching] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -51,41 +53,25 @@ const MainPage: React.FC = () => {
         setSelectedNumberOfChildren(body.numberOfChildren);
     };
 
-    const handleSubmitStations = async () => {
+    const handleSubmitStations = async (params: fetchFaresParameters) => {
         setAvailableJourneys([]);
         setIsFetching(true);
         setIsSearching(false);        
-        const response = await fetchFares(getStationId(departureStation), getStationId(destinationStation));
+        const response = await fetchFares(params);
         const body = await response.json();
         setAvailableFaresWithFetchResponse(body);
         setIsFetching(false);
     };
 
-    const getStationId = (station: StationInfo | undefined): string => {
-        if (!station) {
-            throw new Error('Abort: Station not selected.');
-        }
-        if (station.crs && station.crs.length > 0) {
-            return station.crs;
-        } else if (station.nlc && station.nlc.length > 0) {
-            return station.nlc;
-        } else {
-            throw new Error('Abort: Station invalid.');
-        }
-    };
-
     return (
         <div className = "main-page">
             <UserInputFormArea 
-                departureStation = { departureStation }
-                destinationStation = { destinationStation }
-                setDepartureStation = { setDepartureStation }
-                setDestinationStation = { setDestinationStation }
                 handleSubmitStations = { handleSubmitStations }
             />
             <TrainBoard 
                 isFetching = { isFetching } isSearching = { isSearching } availableJourneys = { availableJourneys }
-                selectedNumberOfAdults = { selectedNumberOfAdults } selectedNumberOfChildren = { selectedNumberOfChildren }/>
+                selectedNumberOfAdults = { selectedNumberOfAdults } selectedNumberOfChildren = { selectedNumberOfChildren }
+            />
         </div>
     );
 };
