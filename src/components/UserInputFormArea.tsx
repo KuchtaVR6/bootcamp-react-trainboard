@@ -11,27 +11,23 @@ export type StationInfo = {
     id: number;
     crs: string;
     nlc: string;
-    isGrownStation: boolean;
-    isSilverSeekStation: boolean;
 }
 
 const UserInputFormArea: React.FC = () => {
 
     // converts to YYYY-MM-DDTHH:MM
-    const yearFirstFormat = (date: Date) => {
-        const incorrectFormat = date.toLocaleString('en-GB');
-        const correctFormat = incorrectFormat.replace(/(\d+)\/(\d+)\/(\d+),\W(\d+:\d+):\d+$/, '$3-$2-$1T$4');
-        return correctFormat;
+    const HTMLDateInputFormat = (date: Date) => {
+        return date.toLocaleString('en-GB').replace(/(\d+)\/(\d+)\/(\d+),\W(\d+:\d+):\d+$/, '$3-$2-$1T$4');
     };
 
     // converts to YYYY-MM-DDTHH:MM:00.000Z as the exact second and milisecond is redundant
-    const yearFirstToAPIFormat = (date: Date) => {
-        return yearFirstFormat(date) + ':00.000Z';
+    const LNERAPIDateFormat = (date: Date) => {
+        return HTMLDateInputFormat(date) + ':00.000Z';
     };
 
     const [departureStation, setDepartureStation] = useState<StationInfo>();
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
-    const [selectedDate, setSelectedDate] = useState<string>(yearFirstToAPIFormat(new Date()));
+    const [selectedDate, setSelectedDate] = useState<string>(LNERAPIDateFormat(new Date()));
     const [numberOfAdults, setNumberOfAdults] = useState<number>(0);
     const [numberOfChildren, setNumberOfChildren] = useState<number>(0);
 
@@ -39,7 +35,7 @@ const UserInputFormArea: React.FC = () => {
 
     const [stationList, setStationList] = useState<StationInfo[]>([]);
 
-    const timeRef = useRef<HTMLInputElement>(null);
+    const dateTimeInputElement = useRef<HTMLInputElement>(null);
     const firstRender = useRef<boolean>(true);
 
     const handleSubmitStations = () => {
@@ -51,10 +47,14 @@ const UserInputFormArea: React.FC = () => {
         );
     };
 
+    const getAdjustedTime = (date: Date, deltaInMinutes: number): Date => {
+        return new Date(date.getTime() + deltaInMinutes * 60 * 1000);
+    };
+
     useEffect(() => {
 
         const selectedTimeAsDate = new Date(selectedDate.slice(0, -3));
-        const minimumTime = new Date(new Date().getTime() - 60*60*1000);
+        const earliestSearchableTime = getAdjustedTime(new Date(), -60);
         
         if (!departureStation) {
             setMessage('Please select the departure station.');
@@ -64,7 +64,7 @@ const UserInputFormArea: React.FC = () => {
             setMessage('Destination must be diffrent from the departure.');
         } else if (isNaN(selectedTimeAsDate.getTime())) {
             setMessage('Invalid date selected.');
-        } else if (selectedTimeAsDate < minimumTime) {
+        } else if (selectedTimeAsDate < earliestSearchableTime) {
             setMessage('Please select a date in the future.');
         } else if (numberOfAdults + numberOfChildren <= 0) {
             setMessage('Please input at least one passenger.');
@@ -85,9 +85,9 @@ const UserInputFormArea: React.FC = () => {
         });
     };
 
-    const resetTime = () => {
-        if (timeRef.current) {
-            timeRef.current.value = yearFirstFormat(new Date());
+    const resetTimeToNow = () => {
+        if (dateTimeInputElement.current) {
+            dateTimeInputElement.current.value = HTMLDateInputFormat(new Date());
         }
     };
 
@@ -95,7 +95,7 @@ const UserInputFormArea: React.FC = () => {
         if (firstRender.current) {
             firstRender.current = false;
             fetchStations().then(handleStationResponse);
-            resetTime();
+            resetTimeToNow();
         }
     });
 
@@ -120,11 +120,11 @@ const UserInputFormArea: React.FC = () => {
                         <input
                             className = 'date-selection'
                             id = "date-selection"
-                            ref = { timeRef }
+                            ref = { dateTimeInputElement }
                             type = 'datetime-local'
-                            onChange = { (event) => {setSelectedDate(yearFirstToAPIFormat(new Date(event.target.value)));} }
+                            onChange = { (event) => {setSelectedDate(LNERAPIDateFormat(new Date(event.target.value)));} }
                         />
-                        <button className = 'reset-date-selection' onClick = { resetTime }>Today</button>
+                        <button className = 'reset-date-selection' onClick = { resetTimeToNow }>Today</button>
                     </div>
 
                     <NumberOfPassengersSelect passengerType = 'adults'
