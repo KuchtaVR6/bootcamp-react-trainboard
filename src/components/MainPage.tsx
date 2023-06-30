@@ -58,9 +58,9 @@ const MainPage: React.FC = () => {
         setAvailableJourneys([]);
         setIsFetching(true);
         setIsSearching(false);        
-        await fetchFares(getStationId(departureStation), getStationId(destinationStation))
-            .then((res) => res.json())
-            .then(setAvailableFaresWithFetchResponse);
+        const response = await fetchFares(getStationId(departureStation), getStationId(destinationStation));
+        const body = await response.json();
+        setAvailableFaresWithFetchResponse(body);
         setIsFetching(false);
     };
 

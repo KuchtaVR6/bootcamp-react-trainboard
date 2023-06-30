@@ -28,20 +28,23 @@ const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, 
         }
     }, [departureStation, destinationStation]);
 
-    const stationSort = (stationOne : StationInfo, stationTwo : StationInfo)=>{
+    const stationSort = (stationOne: StationInfo, stationTwo: StationInfo) => {
         return stationOne.name.toLowerCase() > stationTwo.name.toLowerCase() ? 1 : -1;
     };
 
-    const handleStationResponse = (response : Response) => {
-        response.json().then((body) => {
-            if(body.stations){
-                setStationList(body.stations.sort(stationSort));
-            }
-        });
+    const handleStationResponse = async (response: Response) => {
+        const body = await response.json();
+        if (body.stations) {
+            setStationList(body.stations.sort(stationSort));
+        }
     };
 
     useEffect(() => {
-        fetchStations().then(handleStationResponse);
+        const asyncCallsToBeExecuted = async () => {
+            const response = await fetchStations();
+            handleStationResponse(response);
+        };
+        asyncCallsToBeExecuted();
     });
 
     return (
