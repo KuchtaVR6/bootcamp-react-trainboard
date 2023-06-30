@@ -35,12 +35,20 @@ const MainPage: React.FC = () => {
     const [departureStation, setDepartureStation] = useState<StationInfo>();
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
     const [availableJourneys, setAvailableJourneys] = useState<JourneyInfo[]>([]);
+    const [selectedNumberOfChildren, setSelectedNumberOfChildren] = useState<number>(0);
+    const [selectedNumberOfAdults, setSelectedNumberOfAdults] = useState<number>(0);
 
     const [isSearching, setIsSearching] = useState<boolean>(true);
     const [isFetching, setIsFetching] = useState<boolean>(false);
 
-    const setAvailableFaresWithFetchResponse = (body: {outboundJourneys : JourneyInfo[]}) => {
+    const setAvailableFaresWithFetchResponse = (body: {
+        numberOfAdults: number;
+        numberOfChildren: number;
+        outboundJourneys : JourneyInfo[];
+    }) => {
         setAvailableJourneys(body.outboundJourneys);
+        setSelectedNumberOfAdults(body.numberOfAdults);
+        setSelectedNumberOfChildren(body.numberOfChildren);
     };
 
     const handleSubmitStations = async () => {
@@ -75,7 +83,9 @@ const MainPage: React.FC = () => {
                 setDestinationStation = { setDestinationStation }
                 handleSubmitStations = { handleSubmitStations }
             />
-            <TrainBoard isFetching = { isFetching } isSearching = { isSearching } availableJourneys = { availableJourneys }/>
+            <TrainBoard 
+                isFetching = { isFetching } isSearching = { isSearching } availableJourneys = { availableJourneys }
+                selectedNumberOfAdults = { selectedNumberOfAdults } selectedNumberOfChildren = { selectedNumberOfChildren }/>
         </div>
     );
 };

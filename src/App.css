@@ -99,6 +99,11 @@ body {
   }
 }
 
+.train-board-container .passenger-display {
+  display: flex;
+  justify-content: space-around;
+}
+
 .train-board-container-loading {
   margin-top: 20%;
 }
