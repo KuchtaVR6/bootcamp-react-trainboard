@@ -51,26 +51,34 @@ const UserInputFormArea: React.FC = () => {
         return new Date(date.getTime() + deltaInMinutes * 60 * 1000);
     };
 
-    useEffect(() => {
+    const validateFormChecks : Map<() => boolean, string> = new Map([
+        [() => {return !departureStation;}, 'Please select the departure station.'],
+        [() => {return !destinationStation;}, 'Please select the destination station.'],
+        [() => {return departureStation?.id === destinationStation?.id;}, 'Destination must be diffrent from the departure.'],
+        [() => {
+            const selectedTimeAsDate = new Date(selectedDate.slice(0, -3));
+            return isNaN(selectedTimeAsDate.getTime());
+        }, 'Invalid date selected.'],
+        [() => {
+            const selectedTimeAsDate = new Date(selectedDate.slice(0, -3));
+            const earliestSearchableTime = getAdjustedTimeByDeltaMinutes(new Date(), -60);
+            return selectedTimeAsDate < earliestSearchableTime;
+        }, 'Please select a date in the future.'],
+        [() => {return numberOfAdults + numberOfChildren <= 0;}, 'Please input at least one passenger.'],
+    ]);
 
-        const selectedTimeAsDate = new Date(selectedDate.slice(0, -3));
-        const earliestSearchableTime = getAdjustedTimeByDeltaMinutes(new Date(), -60);
-        
-        if (!departureStation) {
-            setMessage('Please select the departure station.');
-        } else if(!destinationStation) {
-            setMessage('Please select the destination station.');
-        } else if  (departureStation.id === destinationStation.id) {
-            setMessage('Destination must be diffrent from the departure.');
-        } else if (isNaN(selectedTimeAsDate.getTime())) {
-            setMessage('Invalid date selected.');
-        } else if (selectedTimeAsDate < earliestSearchableTime) {
-            setMessage('Please select a date in the future.');
-        } else if (numberOfAdults + numberOfChildren <= 0) {
-            setMessage('Please input at least one passenger.');
-        } else {
-            setMessage('');
+    const verifyFormInputsAndSetMessage = () => {
+        setMessage('');
+        for (const [check, error] of Array.from(validateFormChecks)) {
+            if (check()) {
+                setMessage(error); 
+                break;
+            }
         }
+    };
+
+    useEffect(() => {
+        verifyFormInputsAndSetMessage();
     }, [departureStation, destinationStation, selectedDate, numberOfAdults, numberOfChildren]);
 
     const stationSort = (stationOne: StationInfo, stationTwo: StationInfo) => {
