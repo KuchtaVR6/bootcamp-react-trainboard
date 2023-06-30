@@ -3,7 +3,7 @@ const authHeaders = {
 };
 
 export const fetchStations = () => {
-    return fetchLNERurl('stations');
+    return fetchLNERurl('v1/stations');
 };
 
 export const fetchFares = (originId: string, destinationId: string) => {

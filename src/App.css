@@ -100,13 +100,14 @@ body {
 
 .train-board-container-loading {
   margin-top: 20%;
+}
+
+.with-background{
   background-color: #CDC6AE;
+  padding: 2%;
 }
 
 .train-board-container .loader {
-  padding: 2em;
-  width: 5em;
-  height: 5em;
   animation: rotating 2s ease-in-out infinite;
 }
 

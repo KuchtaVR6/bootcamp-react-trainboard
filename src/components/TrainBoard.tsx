@@ -1,6 +1,6 @@
 import React from 'react';
-import { GrTrain } from 'react-icons/gr';
 import JourneyDisplay from './JourneyDisplay';
+import Loader from './Loader';
 import { JourneyInfo } from './MainPage';
 
 interface TrainBoardArgs {
@@ -33,9 +33,7 @@ const TrainBoard: React.FC<TrainBoardArgs> = ({ isSearching, isFetching, availab
     }
     else if (isFetching) {
         return (
-            <div className = "train-board-container train-board-container-loading">
-                <GrTrain className = 'loader' />
-            </div>
+            <Loader size = { '5em' } background = { true }/>
         );
     }
     else {
