@@ -16,18 +16,18 @@ export type StationInfo = {
 const UserInputFormArea: React.FC = () => {
 
     // converts to YYYY-MM-DDTHH:MM
-    const HTMLDateInputFormat = (date: Date) => {
+    const convertToHTMLDateInputFormat = (date: Date) => {
         return date.toLocaleString('en-GB').replace(/(\d+)\/(\d+)\/(\d+),\W(\d+:\d+):\d+$/, '$3-$2-$1T$4');
     };
 
     // converts to YYYY-MM-DDTHH:MM:00.000Z as the exact second and milisecond is redundant
-    const LNERAPIDateFormat = (date: Date) => {
-        return HTMLDateInputFormat(date) + ':00.000Z';
+    const convertsToLNERAPIDateFormat = (date: Date) => {
+        return convertToHTMLDateInputFormat(date) + ':00.000Z';
     };
 
     const [departureStation, setDepartureStation] = useState<StationInfo>();
     const [destinationStation, setDestinationStation] = useState<StationInfo>();
-    const [selectedDate, setSelectedDate] = useState<string>(LNERAPIDateFormat(new Date()));
+    const [selectedDate, setSelectedDate] = useState<string>(convertsToLNERAPIDateFormat(new Date()));
     const [numberOfAdults, setNumberOfAdults] = useState<number>(0);
     const [numberOfChildren, setNumberOfChildren] = useState<number>(0);
 
@@ -47,14 +47,14 @@ const UserInputFormArea: React.FC = () => {
         );
     };
 
-    const getAdjustedTime = (date: Date, deltaInMinutes: number): Date => {
+    const getAdjustedTimeByDeltaMinutes = (date: Date, deltaInMinutes: number): Date => {
         return new Date(date.getTime() + deltaInMinutes * 60 * 1000);
     };
 
     useEffect(() => {
 
         const selectedTimeAsDate = new Date(selectedDate.slice(0, -3));
-        const earliestSearchableTime = getAdjustedTime(new Date(), -60);
+        const earliestSearchableTime = getAdjustedTimeByDeltaMinutes(new Date(), -60);
         
         if (!departureStation) {
             setMessage('Please select the departure station.');
@@ -87,7 +87,7 @@ const UserInputFormArea: React.FC = () => {
 
     const resetTimeToNow = () => {
         if (dateTimeInputElement.current) {
-            dateTimeInputElement.current.value = HTMLDateInputFormat(new Date());
+            dateTimeInputElement.current.value = convertToHTMLDateInputFormat(new Date());
         }
     };
 
@@ -122,7 +122,7 @@ const UserInputFormArea: React.FC = () => {
                             id = "date-selection"
                             ref = { dateTimeInputElement }
                             type = 'datetime-local'
-                            onChange = { (event) => {setSelectedDate(LNERAPIDateFormat(new Date(event.target.value)));} }
+                            onChange = { (event) => {setSelectedDate(convertsToLNERAPIDateFormat(new Date(event.target.value)));} }
                         />
                         <button className = 'reset-date-selection' onClick = { resetTimeToNow }>Today</button>
                     </div>
