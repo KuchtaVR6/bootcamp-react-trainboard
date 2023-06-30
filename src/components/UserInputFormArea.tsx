@@ -1,20 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { fetchStations } from '../helpers/ApiCallHelper';
-import NumberOfPassengersSelect from './NumberOfPassangersSelect';
+import { StationInfo } from './MainPage';
 import StationSelectMenu from './StationSelectMenu';
 
-export type StationInfo = {
-    name: string;
-    latitude: number;
-    longitude: number;
-    aliases: string[];
-    id: number;
-    crs: string;
-    nlc: string;
+interface UserInputFormAreaArgs {
+    departureStation: StationInfo | undefined;
+    destinationStation: StationInfo | undefined;
+    setDepartureStation: React.Dispatch<React.SetStateAction<StationInfo | undefined>>;
+    setDestinationStation: React.Dispatch<React.SetStateAction<StationInfo | undefined>>;
+    handleSubmitStations: () => void;
 }
 
-const UserInputFormArea: React.FC = () => {
-
+const UserInputFormArea: React.FC<UserInputFormAreaArgs> = ({ departureStation, destinationStation, setDepartureStation, setDestinationStation, handleSubmitStations }) => {
+  
     // converts to YYYY-MM-DDTHH:MM
     const convertToHTMLDateInputFormat = (date: Date) => {
         return date.toLocaleString('en-GB').replace(/(\d+)\/(\d+)\/(\d+),\W(\d+:\d+):\d+$/, '$3-$2-$1T$4');
@@ -32,7 +30,6 @@ const UserInputFormArea: React.FC = () => {
     const [numberOfChildren, setNumberOfChildren] = useState<number>(0);
 
     const [message, setMessage] = useState('Please select both stations');
-
     const [stationList, setStationList] = useState<StationInfo[]>([]);
 
     const dateTimeInputElement = useRef<HTMLInputElement>(null);

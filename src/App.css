@@ -1,15 +1,17 @@
 body {
   background-color: #CDC6AE;
+}
+
+.main-page {
   display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  flex-direction: row;
 }
 
 .user-area-form {
   background-color: #2589BD;
   color: white;
   width: fit-content;
-  margin: 5% auto;
+  margin: 20% 0 0 5%;
   padding: 3%;
   border-radius: 20px;
   height: fit-content;
@@ -86,10 +88,102 @@ body {
 .train-board-container {
   background-color: white;
   color: #187795;
-
+  word-wrap: break-word;
   width: fit-content;
-  margin: 5% auto;
-  padding: 4%;
+  max-width: 40%;
+  margin: 1% auto 0%;
+  padding: 2%;
   border-radius: 20px;
   height: fit-content;
+}
+
+.train-board-container > hr, .journey-display > hr {
+  margin: 0;
+}
+
+.fastest-train-tag, .slowest-train-tag {
+  font-style: italic;
+  margin-left: 5px;
+}
+
+.fastest-train-tag svg {
+  transform: scaleX(-1);
+}
+
+.fast-train {
+  background-color: #bde8ae;
+}
+
+.slow-train {
+  background-color: #e2db6f;
+}
+
+.journey-display .status-and-route {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.status-container {
+  background-color: #187795;
+  color: white;
+  padding: 5px 14px 5px 10px;
+  border-radius: 5px;
+  margin: 3px 0 0 3px;
+  font-size: 90%;
+  font-weight: lighter;
+  font-style: italic;
+}
+
+.warning-tag {
+  background-color: #F4442E
+}
+
+.station-display {
+  font-size: 110%;
+  font-weight: bold;
+  margin: 0 10px;
+}
+
+.station-display .station-name {
+  font-weight: lighter;
+  font-size: 70%;
+  font-style: italic;
+}
+
+.route-display svg {
+  width: 0.8em;
+  height: 0.8em;
+}
+
+.time-display {
+  font-size: 170%;
+  font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.time-display .date {
+  font-weight: lighter;
+  font-size: 50%;
+  font-style: italic;
+}
+
+.duration-display {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0 10px;
+}
+
+.duration-display svg {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+.duration-display .area-between {
+  font-size: 70%;
+  margin: 0 10px;
 }
