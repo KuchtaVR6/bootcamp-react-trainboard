@@ -4,6 +4,7 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
+  background-attachment: fixed;
 }
 
 .main-page {
@@ -203,17 +204,17 @@ body {
 }
 
 
-@media (orientation: portrait) {
+@media (max-width: 1000px) {
 
   body {
     background-image: url('/public/vertical.jpg');
-    background-repeat: no-repeat;
-    background-size: 100vh auto;
+    background-size: 100vh 100wh;
     background-position: 0 0;
   }
 
   .main-page {
     flex-direction: column;
+    align-items: center;
   }
 
   .user-area-form {
@@ -227,3 +228,8 @@ body {
 
 }
 
+@media (max-width: 600px) {
+  body {
+    font-size: 0.8em;
+  }
+}
